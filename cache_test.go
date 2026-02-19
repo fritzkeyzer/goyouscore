@@ -61,7 +61,7 @@ func TestWithCache_GetRequestCached(t *testing.T) {
 	ctx := t.Context()
 
 	// First call should hit the backend
-	_, err = cl.GetV1RateLimitsWithResponse(ctx)
+	_, err = cl.GetV1AffiliatesResultIdWithResponse(ctx, "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -70,12 +70,45 @@ func TestWithCache_GetRequestCached(t *testing.T) {
 	}
 
 	// Second call should be served from cache
-	_, err = cl.GetV1RateLimitsWithResponse(ctx)
+	_, err = cl.GetV1AffiliatesResultIdWithResponse(ctx, "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if fake.calls != 1 {
 		t.Fatalf("expected still 1 call after cache hit, got %d", fake.calls)
+	}
+}
+
+func TestWithCache_GetRateLimitsCached(t *testing.T) {
+	fake := &fakeDoer{}
+	cache := newMapCache()
+
+	cl, err := NewClientWithResponses(ServerURL,
+		WithHTTPClient(fake),
+		WithCache(cache),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ctx := t.Context()
+
+	// First call should hit the backend (not cached)
+	_, err = cl.GetV1RateLimitsWithResponse(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fake.calls != 1 {
+		t.Fatalf("expected 1 call, got %d", fake.calls)
+	}
+
+	// Second call should also hit the backend (not cached)
+	_, err = cl.GetV1RateLimitsWithResponse(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fake.calls != 2 {
+		t.Fatalf("expected 2 calls after rate limit calls, got %d", fake.calls)
 	}
 }
 
