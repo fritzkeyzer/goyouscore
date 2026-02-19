@@ -14,32 +14,22 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	apiKeys := youscore.APIKeys{
 		DataAnalytics:    os.Getenv("YOUSCORE_DATA_ANALYTICS_KEY"),
 		PDFLegalEntities: os.Getenv("YOUSCORE_PDF_LEGAL_KEY"),
 		PDFIndividuals:   os.Getenv("YOUSCORE_PDF_INDIVIDUALS_KEY"),
 		Affiliates:       os.Getenv("YOUSCORE_AFFILIATES_KEY"),
 	}
-	if apiKeys.DataAnalytics == "" {
-		fmt.Println("YOUSCORE_DATA_ANALYTICS_KEY environment variable is required")
-		os.Exit(1)
-	}
-	if apiKeys.PDFLegalEntities == "" {
-		fmt.Println("YOUSCORE_PDF_LEGAL_KEY environment variable is required")
-		os.Exit(1)
-	}
-	if apiKeys.PDFIndividuals == "" {
-		fmt.Println("YOUSCORE_PDF_INDIVIDUALS_KEY environment variable is required")
-		os.Exit(1)
-	}
-	if apiKeys.Affiliates == "" {
-		fmt.Println("YOUSCORE_AFFILIATES_KEY environment variable is required")
-		os.Exit(1)
+	if apiKeys.DataAnalytics == "" || apiKeys.PDFLegalEntities == "" || apiKeys.PDFIndividuals == "" || apiKeys.Affiliates == "" {
+		log.Fatal("ERROR: missing required API keys:", apiKeys)
 	}
 
-	cache := newJSONCache()
+	// create a silly file based cache (for the sake of this demo)
+	cache := newDumbFileCache()
 
-	// Create a client with per-endpoint API key authentication and file-backed caching.
+	// create client with per-endpoint API key auth and a cache
 	cl, err := youscore.NewClientWithResponses(youscore.ServerURL,
 		youscore.WithAPIKeys(apiKeys),
 		youscore.WithCache(cache),
@@ -47,8 +37,6 @@ func main() {
 	if err != nil {
 		log.Fatal("ERROR: create client")
 	}
-
-	ctx := context.Background()
 
 	// example EDRPOU code
 	contractorCode := "08215600"
@@ -58,11 +46,11 @@ func main() {
 		ShowCurrentData: ptr(true),
 	})
 	if err != nil {
-		log.Fatal("ERROR: get contractor:", err)
+		log.Fatal("ERROR: get USR:", err)
 	}
-	log.Println("Get contractor status:", usrResp.StatusCode())
+	log.Println("Get USR status:", usrResp.StatusCode())
 	if usrResp.StatusCode() == http.StatusOK {
-		//log.Println("Get contractor:", toJSUtil(usrResp.JSON200))
+		//log.Println("Get USR:", toJSUtil(usrResp.JSON200))
 		dumpJSUtil(contractorCode+"_usr", usrResp.JSON200)
 	}
 
@@ -194,16 +182,16 @@ const (
 	cacheTTL  = 7 * 24 * time.Hour // cached entries expire after 7 days
 )
 
-// jsonCache is a map-based cache that persists to a JSON file on every write.
+// dumbFileCache is a map-based cache that persists to a JSON file on every write.
 // It implements the youscore.Cache interface.
-type jsonCache struct {
+type dumbFileCache struct {
 	mu      sync.Mutex
 	entries map[string]cacheEntry
 }
 
-// newJSONCache creates a new jsonCache, loading existing entries from the cache file.
-func newJSONCache() *jsonCache {
-	c := &jsonCache{
+// newDumbFileCache creates a new dumbFileCache, loading existing entries from the cache file.
+func newDumbFileCache() *dumbFileCache {
+	c := &dumbFileCache{
 		entries: make(map[string]cacheEntry),
 	}
 	c.load()
@@ -219,7 +207,7 @@ type cacheEntry struct {
 }
 
 // load reads the cache file from disk into memory.
-func (c *jsonCache) load() {
+func (c *dumbFileCache) load() {
 	data, err := os.ReadFile(cacheFile)
 	if err != nil {
 		return // file doesn't exist yet or can't be read — start with empty cache
@@ -234,7 +222,7 @@ func (c *jsonCache) load() {
 }
 
 // save writes the entire cache map to the JSON file.
-func (c *jsonCache) save() {
+func (c *dumbFileCache) save() {
 	data, err := json.MarshalIndent(c.entries, "", "  ")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cache: failed to marshal: %v\n", err)
@@ -247,7 +235,7 @@ func (c *jsonCache) save() {
 }
 
 // Get retrieves a cached response if it exists and is not expired.
-func (c *jsonCache) Get(url string, key string) (youscore.CachedResponse, bool) {
+func (c *dumbFileCache) Get(url string, key string) (youscore.CachedResponse, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -269,7 +257,7 @@ func (c *jsonCache) Get(url string, key string) (youscore.CachedResponse, bool) 
 }
 
 // Set stores a response in the cache and immediately persists to disk.
-func (c *jsonCache) Set(url string, key string, resp youscore.CachedResponse) {
+func (c *dumbFileCache) Set(url string, key string, resp youscore.CachedResponse) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
