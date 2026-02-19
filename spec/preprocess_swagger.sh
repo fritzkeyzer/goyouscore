@@ -4,4 +4,4 @@
 
 sed -e 's|{url}|{photoUrl}|g' \
     -e 's|"name": "url"|"name": "photoUrl"|g' \
-    spec/swagger.json > spec/swagger_processed.json
+    spec/swagger_en.json > spec/swagger_en_processed.json
