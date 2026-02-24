@@ -1,6 +1,6 @@
 module github.com/fritzkeyzer/goyouscore
 
-go 1.26
+go 1.25
 
 require (
 	github.com/getkin/kin-openapi v0.133.0
