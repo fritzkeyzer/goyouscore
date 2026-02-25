@@ -45,12 +45,14 @@ func WithAPIKeys(keys APIKeys) ClientOption {
 
 // apiKeyForPath returns the appropriate API key for the given request path.
 func apiKeyForPath(keys APIKeys, path string) string {
+	path = strings.TrimPrefix(path, "/")
+
 	switch {
-	case strings.HasPrefix(path, "/v1/contractors/pdf-file/"):
+	case strings.HasPrefix(path, "v1/contractors/pdf-file/"):
 		return keys.PDFLegalEntities
-	case strings.HasPrefix(path, "/v1/individuals/pdf-reports"):
+	case strings.HasPrefix(path, "v1/individuals/pdf-reports"):
 		return keys.PDFIndividuals
-	case strings.HasPrefix(path, "/v1/affiliates"):
+	case strings.HasPrefix(path, "v1/affiliates"):
 		return keys.Affiliates
 	default:
 		return keys.DataAnalytics
