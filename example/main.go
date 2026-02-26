@@ -29,10 +29,16 @@ func main() {
 	// create a silly file based cache (for the sake of this demo)
 	cache := newDumbFileCache()
 
+	// create simple usage tracker
+	totalUsage := new(usage)
+	usageTracker := newSimpleUsageTracker(totalUsage)
+	defer totalUsage.Print()
+
 	// create client with per-endpoint API key auth and a cache
 	cl, err := youscore.NewClientWithResponses(youscore.ServerURL,
 		youscore.WithAPIKeys(apiKeys),
 		youscore.WithCache(cache),
+		youscore.WithUsageTracking(usageTracker),
 	)
 	if err != nil {
 		log.Fatal("ERROR: create client")
@@ -274,6 +280,29 @@ func (c *dumbFileCache) Set(url string, key string, resp youscore.CachedResponse
 	}
 
 	c.save()
+}
+
+// ----------------------------
+// --- Simple Usage tracker ---
+// ----------------------------
+
+type usage struct {
+	PerType map[string]int
+	Calls   []string
+}
+
+func (u *usage) Print() {
+	fmt.Println("Total usage:", toJSUtil(u))
+}
+
+func newSimpleUsageTracker(usage *usage) func(ctx context.Context, apiType youscore.APIType, path string) {
+	if usage.PerType == nil {
+		usage.PerType = make(map[string]int)
+	}
+	return func(ctx context.Context, apiType youscore.APIType, path string) {
+		usage.PerType[string(apiType)]++
+		usage.Calls = append(usage.Calls, fmt.Sprintf("%s: %s", apiType, path))
+	}
 }
 
 // -----------------
