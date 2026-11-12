@@ -4265,7 +4265,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/YC.Api.Models.Response.FinancialIndustrialGroupDescriptor"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YC.Api.Models.Response.FinancialIndustrialGroupDescriptor"
+                  }
                 },
                 "example": {
                   "id": 15,
@@ -5969,7 +5972,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/YC.Api.Models.Response.ContractorSanction"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YC.Api.Models.Response.ContractorSanction"
+                  }
                 },
                 "example": {
                   "date": "2018-01-26T00:00:00+02:00",
@@ -11024,7 +11030,7 @@
           24
         ],
         "type": "integer",
-        "description": "\u003cp\u003eMembers:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003ci\u003e0\u003c/i\u003e - Undefined\u003c/li\u003e\u003cli\u003e\u003ci\u003e1\u003c/i\u003e - (↑) By Full Name\u003c/li\u003e\u003cli\u003e\u003ci\u003e2\u003c/i\u003e - (↓) By Full Name (reverse)\u003c/li\u003e\u003cli\u003e\u003ci\u003e3\u003c/i\u003e - (↑) Beneficiary of the counterparty\u003c/li\u003e\u003cli\u003e\u003ci\u003e4\u003c/i\u003e - (↓) Counterparty is a beneficiary\u003c/li\u003e\u003cli\u003e\u003ci\u003e5\u003c/i\u003e - (↑) Founder of the counterparty\u003c/li\u003e\u003cli\u003e\u003ci\u003e6\u003c/i\u003e - (↓) Counterparty is a founder\u003c/li\u003e\u003cli\u003e\u003ci\u003e7\u003c/i\u003e - (↑) Manager / signatory of the counterparty\u003c/li\u003e\u003cli\u003e\u003ci\u003e8\u003c/i\u003e - (↓) Counterparty is a manager / signatory\u003c/li\u003e\u003cli\u003e\u003ci\u003e9\u003c/i\u003e - (↓) Branch of the counterparty\u003c/li\u003e\u003cli\u003e\u003ci\u003e10\u003c/i\u003e - (↑) Counterparty is a branch\u003c/li\u003e\u003cli\u003e\u003ci\u003e11\u003c/i\u003e - (↑) Counterparty is part of the group\u003c/li\u003e\u003cli\u003e\u003ci\u003e12\u003c/i\u003e - (↑) Counterparty has a connection with the group\u003c/li\u003e\u003cli\u003e\u003ci\u003e13\u003c/i\u003e - (↑) Counterparty is related to the group\u003c/li\u003e\u003cli\u003e\u003ci\u003e14\u003c/i\u003e - (↓) Part of the group\u003c/li\u003e\u003cli\u003e\u003ci\u003e15\u003c/i\u003e - (↓) Has a connection with the group\u003c/li\u003e\u003cli\u003e\u003ci\u003e16\u003c/i\u003e - (↓) Is related to the group\u003c/li\u003e\u003cli\u003e\u003ci\u003e17\u003c/i\u003e - (↑) Expert\u003c/li\u003e\u003cli\u003e\u003ci\u003e18\u003c/i\u003e - (↑) Journalist\u003c/li\u003e\u003cli\u003e\u003ci\u003e19\u003c/i\u003e - (↑) Person of interest\u003c/li\u003e\u003cli\u003e\u003ci\u003e20\u003c/i\u003e - (↑) Mention\u003c/li\u003e\u003cli\u003e\u003ci\u003e21\u003c/i\u003e - (↓) Expert\u003c/li\u003e\u003cli\u003e\u003ci\u003e22\u003c/i\u003e - (↓) Journalist\u003c/li\u003e\u003cli\u003e\u003ci\u003e23\u003c/i\u003e - (↓) Person of interest\u003c/li\u003e\u003cli\u003e\u003ci\u003e24\u003c/i\u003e - (↓) Mention\u003c/li\u003e\u003c/ul\u003e",
+        "description": "Enum: 0 - Undefined, 1 - (↑) By Full Name, 2 - (↓) By Full Name (reverse), 3 - (↑) Beneficiary of the counterparty, 4 - (↓) Counterparty is a beneficiary, 5 - (↑) Founder of the counterparty, 6 - (↓) Counterparty is a founder, 7 - (↑) Manager / signatory of the counterparty, 8 - (↓) Counterparty is a manager / signatory, 9 - (↓) Branch of the counterparty, 10 - (↑) Counterparty is a branch, 11 - (↑) Counterparty is part of the group, 12 - (↑) Counterparty has a connection with the group, 13 - (↑) Counterparty is related to the group, 14 - (↓) Part of the group, 15 - (↓) Has a connection with the group, 16 - (↓) Is related to the group, 17 - (↑) Expert, 18 - (↑) Journalist, 19 - (↑) Person of interest, 20 - (↑) Mention, 21 - (↓) Expert, 22 - (↓) Journalist, 23 - (↓) Person of interest, 24 - (↓) Mention",
         "format": "int32"
       },
       "YC.Api.Models.Affiliates.AffiliateRoot": {

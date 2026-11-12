@@ -20,7 +20,7 @@ gen:
     bash spec/preprocess_swagger.sh
 
     # generate go client code from the processed spec
-    oapi-codegen -package youscore spec/swagger_en_processed.json > client.gen.go
+    oapi-codegen -config oapi.yaml spec/swagger_en_processed.json
     go mod tidy
 
 test: gen
